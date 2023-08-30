@@ -5,10 +5,12 @@ Before running this script make sure that you have a Premiere project opened wit
 """
 
 
-
+new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
 #to run environment
 # source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
 
+to_stabilize = False
+to_render = False
 
 import time
 import pymiere
@@ -20,6 +22,15 @@ if not project_opened:
     raise ValueError("please open a project")
 
 project = pymiere.objects.app.project
+
+
+
+rootBin = project.rootItem
+# importedItem = rootBin.createBin(new_clip)
+project.importFiles([new_clip], True, rootBin, False)
+
+
+
 
 # Open Sequences in Premiere Pro if none are active
 if not sequence_active:
@@ -95,7 +106,7 @@ effectName = "Warp Stabilizer"
 qsequence = pymiere.objects.qe.project.getSequenceAt(0)
 # qsequence = sequence
 qclip = qsequence.getVideoTrackAt(0).getItemAt(0)
-qclip.addVideoEffect(pymiere.objects.qe.project.getVideoEffectByName("Warp Stabilizer"))
+if to_stabilize: qclip.addVideoEffect(pymiere.objects.qe.project.getVideoEffectByName("Warp Stabilizer"))
 smoothness = 2
 applyEffectProperties(getComponentByDisplayName(clip.components, effectName))
 
@@ -107,8 +118,9 @@ while not sequence.isDoneAnalyzingForVideoEffects():
 outputPath = "/Users/andrewke/Downloads/out.mp4"
 
 
-result = sequence.exportAsMediaDirect(
-    outputPath,  # path of the exported file
-    "/Users/andrewke/Documents/Adobe/Adobe Media Encoder/22.0/Presets/hevc10.epr",  # path of the export preset file
-    pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
-)
+if to_render:
+    result = sequence.exportAsMediaDirect(
+        outputPath,  # path of the exported file
+        "/Users/andrewke/Documents/Adobe/Adobe Media Encoder/22.0/Presets/hevc10.epr",  # path of the export preset file
+        pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
+    )

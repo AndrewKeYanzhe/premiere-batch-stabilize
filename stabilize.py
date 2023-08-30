@@ -74,10 +74,21 @@ print(video_width)
 video_height = int(match.group(1)[8:12])
 print(video_height)
 
+# if video_width == 2880:
+#     fps = 23.985
+#     fps_setting = 110
+# elif video_width == 4800:
+#     fps = 23.983
+#     fps_setting = 110
+
+#set 23.976 in prpro. plan to skip stabilisation if clip is 56fps
+
 oldSettings = sequence.getSettings()
 oldSettings.videoFrameHeight = video_height
 oldSettings.videoFrameWidth = video_width
+# oldSettings.videoDisplayFormat = fps_setting #doesnt work
 sequence.setSettings(oldSettings)
+
 
 
 # dstTicks =  0

@@ -11,6 +11,7 @@ new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of
 
 to_stabilize = False
 to_render = False
+to_import = False
 
 import time
 import pymiere
@@ -21,16 +22,6 @@ project_opened, sequence_active = wrappers.check_active_sequence(crash=False)
 if not project_opened:
     raise ValueError("please open a project")
 
-project = pymiere.objects.app.project
-
-
-
-rootBin = project.rootItem
-# importedItem = rootBin.createBin(new_clip)
-project.importFiles([new_clip], True, rootBin, False)
-
-
-
 
 # Open Sequences in Premiere Pro if none are active
 if not sequence_active:
@@ -39,6 +30,66 @@ if not sequence_active:
         project.openSequence(sequenceID=seq.sequenceID)
     # Set the first Sequence in the list as the active Sequence
     project.activeSequence = sequences[0]
+
+
+project = pymiere.objects.app.project
+
+sequence = project.activeSequence
+
+
+
+import re
+
+
+
+#import clip
+rootBin = project.rootItem
+if to_import: project.importFiles([new_clip], True, rootBin, False)
+
+
+
+
+items = project.rootItem.findItemsMatchingMediaPath(new_clip, ignoreSubclips=False)  
+
+
+
+
+
+
+#insert clip
+project.activeSequence.videoTracks[0].insertClip(items[0], 0)
+
+text = project.activeSequence.videoTracks[0].clips[0].projectItem.getProjectMetadata()
+# info= text.child(0).child(0).child('premierePrivateProjectMetaData:Column.Intrinsic.VideoInfo')
+# alert(info);
+
+print(text)
+
+match = re.search(r'VideoInfo(.{4,12})', text)
+
+print(match.group(1))
+video_width = int(match.group(1)[1:5])
+print(video_width)
+
+video_height = int(match.group(1)[8:12])
+print(video_height)
+
+oldSettings = sequence.getSettings()
+oldSettings.videoFrameHeight = video_height
+oldSettings.videoFrameWidth = video_width
+sequence.setSettings(oldSettings)
+
+
+# dstTicks =  0
+
+# clipToInsert = first_clip
+
+# video_track.insertClip(clipToInsert, dstTicks)
+
+
+
+
+
 
 # List all videos clips in the active Sequence
 clips = wrappers.list_video(project.activeSequence)
@@ -60,14 +111,14 @@ end_frame = 100
 #     time.sleep(0.1)
 
 # Set sequence resolution
-sequence = project.activeSequence
+
 # sequence.setSettings("videoFrameHeight"=4800)
-oldSettings = sequence.getSettings()
 
-oldSettings.videoFrameHeight = 2040
-oldSettings.videoFrameWidth = 4800
 
-sequence.setSettings(oldSettings)
+
+
+
+
 
 videoTrack = sequence.videoTracks[0]
 clip = videoTrack.clips[0]

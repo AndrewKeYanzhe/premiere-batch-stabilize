@@ -42,6 +42,10 @@ for file_path, file_name in mov_files:
     print("-" * 30)
     print("File path:", file_path)
     print("File name:", file_name)
+
+    # outputPath = "/Users/andrewke/Downloads/out.mp4"
+    outputPath = output_folder + "/" + file_name+".mp4"
+
     
 
 
@@ -114,16 +118,43 @@ for file_path, file_name in mov_files:
     # info= text.child(0).child(0).child('premierePrivateProjectMetaData:Column.Intrinsic.VideoInfo')
     # alert(info);
 
-    # print(text)
+    print(text)
 
-    match = re.search(r'VideoInfo(.{4,12})', text)
+    res_match = re.search(r'VideoInfo(.{4,12})', text)
 
     # print(match.group(1))
-    video_width = int(match.group(1)[1:5])
+    video_width = int(res_match.group(1)[1:5])
     print(video_width)
 
-    video_height = int(match.group(1)[8:12])
+    video_height = int(res_match.group(1)[8:12])
     print(video_height)
+
+    fps_match = float(re.search(r'MediaTimebase(.{4,7})', text).group(1)[1:])
+    print(fps_match)
+
+    if fps_match > 46:
+        print("skipping stabilisation")
+        pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  
+
+        pymiere.objects.app.project.closeDocument()
+
+
+        
+
+        outputPath = output_folder + "/" + file_name+".mov"
+        shutil.copy(file_path, outputPath)
+
+
+        if move_source_after_stabilize:
+            destination_file_path = os.path.join(completed_folder, file_name+".mov")
+            shutil.move(file_path, destination_file_path)
+        continue
+    else:
+        outputPath = output_folder + "/" + file_name+".mp4"
+
+
+
+    # time.sleep(999)
 
     # if video_width == 2880:
     #     fps = 23.985
@@ -235,9 +266,7 @@ for file_path, file_name in mov_files:
 
 
     # time.sleep(99999)
-    outputPath = "/Users/andrewk÷e/Downloads/out.mp4"
-    outputPath = output_folder + "/" + file_name+".mp4"
-
+    
 
     if to_render:
         result = sequence.exportAsMediaDirect(

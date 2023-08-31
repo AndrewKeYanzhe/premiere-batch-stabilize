@@ -1,14 +1,12 @@
 """
-This demo show basic interactions with Premiere Pro using the Pymiere library.
-It will display some info about the currently opened project in Premiere Pro and an action in the timeline.
-Before running this script make sure that you have a Premiere project opened with at least a sequence.
+Before running this script make sure that you have Premiere opened.
 """
 input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
 output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
 completed_folder="/Users/andrewke/Desktop/100D Test/completed"
 
 new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
-#to run environment
+# to run environment:
 # source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
 
 # to_stabilize = True
@@ -23,9 +21,40 @@ import pymiere
 from pymiere import wrappers
 
 import sys
+import re
 
-import pymiere  
 
+
+
+def getComponentByDisplayName(components, name):
+    for component in components:
+        if name == component.displayName:
+            return component
+    return None
+
+
+def applyEffectProperties(component):
+    if not component:
+        print("not component")
+        return
+    
+    print("adding warp stabilizer effect")
+    isDetailedAnalysis=False
+    
+    for property in component.properties:
+        display_name = property.displayName
+        # print(display_name)
+        # print(property.getValue())
+        
+        if display_name == "Smoothness":
+            property.setValue(smoothness, True)  # 1 means update gui
+        elif display_name == "Advanced":
+            isDetailedAnalysis=True #detailed analysis is the first option in the advanced menu
+        # elif isDetailedAnalysis:
+        #     property.setValue(True, True)  # a bit too slow
+        #     isDetailedAnalysis = False
+
+    return
 
 
 
@@ -89,7 +118,7 @@ for file_path, file_name in mov_files:
 
 
 
-    import re
+    
 
 
 
@@ -99,29 +128,19 @@ for file_path, file_name in mov_files:
 
 
 
-
-    items = project.rootItem.findItemsMatchingMediaPath(file_path, ignoreSubclips=False)  
-
-
-
-
-
-
     #insert clip
+    items = project.rootItem.findItemsMatchingMediaPath(file_path, ignoreSubclips=False)  
     project.activeSequence.videoTracks[0].insertClip(items[0], 0)
 
+    #read video metadata
     text = project.activeSequence.videoTracks[0].clips[0].projectItem.getProjectMetadata()
-    # info= text.child(0).child(0).child('premierePrivateProjectMetaData:Column.Intrinsic.VideoInfo')
-    # alert(info);
-
     # print(text)
 
+    #find resolution from video metadata
     match = re.search(r'VideoInfo(.{4,12})', text)
-
     # print(match.group(1))
     video_width = int(match.group(1)[1:5])
     print(video_width)
-
     video_height = int(match.group(1)[8:12])
     print(video_height)
 
@@ -134,19 +153,12 @@ for file_path, file_name in mov_files:
 
     #set 23.976 in prpro. plan to skip stabilisation if clip is 56fps
 
+    #set sequence resolution
     oldSettings = sequence.getSettings()
     oldSettings.videoFrameHeight = video_height
     oldSettings.videoFrameWidth = video_width
     # oldSettings.videoDisplayFormat = fps_setting #doesnt work
     sequence.setSettings(oldSettings)
-
-
-
-    # dstTicks =  0
-
-    # clipToInsert = first_clip
-
-    # video_track.insertClip(clipToInsert, dstTicks)
 
 
 
@@ -169,37 +181,9 @@ for file_path, file_name in mov_files:
     videoTrack = sequence.videoTracks[0]
     clip = videoTrack.clips[0]
 
-    # clip.addVideoEffect(qe.project.getVideoEffectByName("Warp Stabilizer"))#error
+    
 
-    def getComponentByDisplayName(components, name):
-        for component in components:
-            if name == component.displayName:
-                return component
-        return None
-
-
-    def applyEffectProperties(component):
-        if not component:
-            print("not component")
-            return
-        
-        print("adding warp stabilizer effect")
-        isDetailedAnalysis=False
-        
-        for property in component.properties:
-            display_name = property.displayName
-            # print(display_name)
-            # print(property.getValue())
-            
-            if display_name == "Smoothness":
-                property.setValue(smoothness, True)  # 1 means update gui
-            elif display_name == "Advanced":
-                isDetailedAnalysis=True #detailed analysis is the first option in the advanced menu
-            # elif isDetailedAnalysis:
-            #     property.setValue(True, True)  # a bit too slow
-            #     isDetailedAnalysis = False
-
-        return
+    
 
 
 
@@ -216,13 +200,11 @@ for file_path, file_name in mov_files:
     # qsequence = sequence
     qclip = qsequence.getVideoTrackAt(0).getItemAt(0)
 
-
-
     print("qclip",qclip)
 
 
 
-
+    #add warp stabilizer
     qclip.addVideoEffect(pymiere.objects.qe.project.getVideoEffectByName("Warp Stabilizer"))
     smoothness = 2
     applyEffectProperties(getComponentByDisplayName(clip.components, effectName))
@@ -235,7 +217,7 @@ for file_path, file_name in mov_files:
 
 
     # time.sleep(99999)
-    outputPath = "/Users/andrewk÷e/Downloads/out.mp4"
+    # outputPath = "/Users/andrewk÷e/Downloads/out.mp4"
     outputPath = output_folder + "/" + file_name+".mp4"
 
 
@@ -246,6 +228,7 @@ for file_path, file_name in mov_files:
             pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
         )
 
+    #avoid making changes to original prproj. closeDocument() saves the file by default
     pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  
 
     pymiere.objects.app.project.closeDocument()

@@ -6,13 +6,12 @@ output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
 completed_folder="/Users/andrewke/Desktop/100D Test/completed"
 
 new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
-# to run environment:
-# source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
+
 
 # to_stabilize = True
 to_render = True
 to_import = True
-move_source_after_stabilize = True
+move_source_after_stabilize = False
 
 import os
 import shutil
@@ -25,6 +24,7 @@ import re
 
 
 
+print("running python script")
 
 def getComponentByDisplayName(components, name):
     for component in components:
@@ -66,6 +66,11 @@ for root, dirs, files in os.walk(input_folder):
         if file.lower().endswith('.mov'):
             file_path = os.path.join(root, file)
             mov_files.append((file_path, file[:-4]))
+            file_extension = '.mov'
+        elif file.lower().endswith('.mp4'):
+            file_path = os.path.join(root, file)
+            mov_files.append((file_path, file[:-4]))
+            file_extension = '.mp4'
 
 for file_path, file_name in mov_files:
     print("-" * 30)
@@ -163,12 +168,12 @@ for file_path, file_name in mov_files:
 
         
 
-        outputPath = output_folder + "/" + file_name+".mov"
+        outputPath = output_folder + "/" + file_name+file_extension
         shutil.copy(file_path, outputPath)
 
 
         if move_source_after_stabilize:
-            destination_file_path = os.path.join(completed_folder, file_name+".mov")
+            destination_file_path = os.path.join(completed_folder, file_name+file_extension)
             shutil.move(file_path, destination_file_path)
         continue
     else:

@@ -1,18 +1,3 @@
-"""
-Before running this script make sure that you have Premiere opened.
-"""
-input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
-output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
-completed_folder="/Users/andrewke/Desktop/100D Test/completed"
-
-new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
-
-
-# to_stabilize = True
-to_render = True
-to_import = True
-move_source_after_stabilize = False
-
 import os
 import shutil
 import time
@@ -21,6 +6,34 @@ from pymiere import wrappers
 
 import sys
 import re
+
+
+# input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
+# output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
+# completed_folder="/Users/andrewke/Desktop/100D Test/completed"
+
+input_folder = "/Users/andrewke/Desktop/Poco F3 test"
+
+subfolders = ["Stabilised", "Completed"]
+
+# Create subfolders
+for subfolder in subfolders:
+    subfolder_path = os.path.join(input_folder, subfolder)
+    os.makedirs(subfolder_path, exist_ok=True)
+
+output_folder = os.path.join(input_folder,"Stabilised")
+completed_folder = os.path.join(input_folder,"Completed")
+
+new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
+
+preset = "/Users/andrewke/Documents/Adobe/Adobe Media Encoder/22.0/Presets/hevc10 80mbps.epr"
+
+# to_stabilize = True
+to_render = True
+to_import = True
+move_source_after_stabilize = True
+
+
 
 
 
@@ -61,16 +74,11 @@ def applyEffectProperties(component):
 
 mov_files = []
 
-for root, dirs, files in os.walk(input_folder):
-    for file in files:
-        if file.lower().endswith('.mov'):
-            file_path = os.path.join(root, file)
-            mov_files.append((file_path, file[:-4]))
-            file_extension = '.mov'
-        elif file.lower().endswith('.mp4'):
-            file_path = os.path.join(root, file)
-            mov_files.append((file_path, file[:-4]))
-            file_extension = '.mp4'
+for file in os.listdir(input_folder):
+    if file.lower().endswith('.mov') or file.lower().endswith('.mp4'):
+        file_path = os.path.join(input_folder, file)
+        mov_files.append((file_path, os.path.splitext(file)[0]))
+        file_extension = os.path.splitext(file)[1]
 
 for file_path, file_name in mov_files:
     print("-" * 30)
@@ -257,11 +265,12 @@ for file_path, file_name in mov_files:
 
     # time.sleep(99999)
     
+    
 
     if to_render:
         result = sequence.exportAsMediaDirect(
             outputPath,  # path of the exported file
-            "/Users/andrewke/Documents/Adobe/Adobe Media Encoder/22.0/Presets/hevc10.epr",  # path of the export preset file
+            preset,  # path of the export preset file
             pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
         )
 

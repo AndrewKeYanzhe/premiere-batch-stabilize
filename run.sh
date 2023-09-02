@@ -44,10 +44,6 @@ if ! pgrep "Adobe Premiere Pro" >/dev/null; then
 
         sleep 1
     done
-
-    
-
-
     
 else
     echo "Adobe Premiere Pro is already running."
@@ -71,9 +67,16 @@ while true; do
     echo "$output"
 
     echo " "
-    echo "This is your script. Press Enter to restart or type 'exit' to quit."
+    echo "This is your script. Press Enter to restart. Type 'f' to switch to a different input folder. Type 'exit' to quit."
     
     read -r input
+
+    if [[ "$input" == "f" ]]; then
+        echo "Enter input folder (no need for quotes, use <backslash space> for space. can drag and drop folder into terminal): "
+
+        read input_folder
+        
+    fi
 
     if [[ "$input" == "exit" ]]; then
         echo "Exiting the script."

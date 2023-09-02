@@ -136,17 +136,7 @@ for file_path, file_name in mov_files:
         raise ValueError("please open a project")
 
 
-    # Open Sequences in Premiere Pro if none are active
-    if not sequence_active:
-        sequences = wrappers.list_sequences()
-        for seq in sequences:
-            project.openSequence(sequenceID=seq.sequenceID)
-        # Set the first Sequence in the list as the active Sequence
-        project.activeSequence = sequences[0]
 
-
-
-    sequence = project.activeSequence
 
 
 
@@ -160,9 +150,38 @@ for file_path, file_name in mov_files:
 
 
 
-    #insert clip
+    # #insert clip
     items = project.rootItem.findItemsMatchingMediaPath(file_path, ignoreSubclips=False)  
-    project.activeSequence.videoTracks[0].insertClip(items[0], 0)
+    clip1=items[0]
+    # project.activeSequence.videoTracks[0].insertClip(items[0], 0)
+
+
+
+
+
+    project.createNewSequenceFromClips(clip1.name, [clip1], rootBin);
+
+    # Open Sequences in Premiere Pro if none are active
+    if not sequence_active:
+        sequences = wrappers.list_sequences()
+        for seq in sequences:
+            project.openSequence(sequenceID=seq.sequenceID)
+        # Set the first Sequence in the list as the active Sequence
+        project.activeSequence = sequences[0]
+
+    sequence = project.activeSequence
+
+
+
+
+
+
+
+
+
+
+
+
 
     #read video metadata
     text = project.activeSequence.videoTracks[0].clips[0].projectItem.getProjectMetadata()

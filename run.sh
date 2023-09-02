@@ -60,14 +60,29 @@ fi
 while true; do
     # Your script logic goes here
 
-    # Run the Python script and capture its output
-    output=$(python stabilize.py "$input_folder" 2>&1)
+
+    if [[ -n "$input_folder" ]]; then
+        echo "input_folder is a non-empty string."
+
+        # Run the Python script and capture its output
+        output=$(python stabilize.py "$input_folder" 2>&1)
+    else
+        echo "input_folder is either empty or not a string."
+
+        # Run the Python script and capture its output
+        output=$(python stabilize.py 2>&1)
+    fi
+
+    
 
     # # Print the captured output
     echo "$output"
 
+
+
+
     echo " "
-    echo "This is your script. Press Enter to restart. Type 'f' to switch to a different input folder. Type 'exit' to quit."
+    echo "Press Enter to restart. Type 'f' to switch to a different input folder. Type 'exit' to quit."
     
     read -r input
 
@@ -83,3 +98,7 @@ while true; do
         break
     fi
 done
+
+
+
+# Todo : There might be a bug when switching from Internal disk to external hard disk. Folder of videos fails to change

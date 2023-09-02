@@ -13,11 +13,12 @@ import re
 # completed_folder="/Users/andrewke/Desktop/100D Test/completed"
 
 #if no argument is used
-input_folder = "/Users/andrewke/Desktop/Poco F3 test"
+input_folder = "/Volumes/Elements/test"
 
 #if argument is used, set it as input folder
 if len(sys.argv) == 2:
     input_folder = sys.argv[1]
+    print("1st arguemnt", input_folder)
 
 
 # subfolders = ["Stabilised", "Completed"]

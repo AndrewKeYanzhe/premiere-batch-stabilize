@@ -7,6 +7,7 @@ from pymiere import wrappers
 import sys
 import re
 
+debug = False #this disables copying etc and restores the files to the original positions
 
 # input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
 # output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
@@ -21,8 +22,8 @@ if len(sys.argv) == 2:
     print("1st arguemnt", input_folder)
 
 
-# subfolders = ["Stabilised", "Completed"]
-subfolders = ["Original files"]
+subfolders = ["Stabilised", "Original files"]
+# subfolders = ["Original files"]
 
 # Create subfolders
 for subfolder in subfolders:
@@ -98,9 +99,9 @@ for file_path, file_name in mov_files:
     outputPath = output_folder + "/" + file_name+".mp4"
 
     
-    #move source files to different folder
+    # #move source files to different folder
     new_source_path = os.path.join(completed_folder, file_name+".mov")
-    shutil.move(file_path, new_source_path)
+    # shutil.move(file_path, new_source_path)
 
     
 
@@ -155,12 +156,12 @@ for file_path, file_name in mov_files:
 
     #import clip
     rootBin = project.rootItem
-    if to_import: project.importFiles([new_source_path], True, rootBin, False)
+    if to_import: project.importFiles([file_path], True, rootBin, False)
 
 
 
     #insert clip
-    items = project.rootItem.findItemsMatchingMediaPath(new_source_path, ignoreSubclips=False)  
+    items = project.rootItem.findItemsMatchingMediaPath(file_path, ignoreSubclips=False)  
     project.activeSequence.videoTracks[0].insertClip(items[0], 0)
 
     #read video metadata
@@ -178,10 +179,10 @@ for file_path, file_name in mov_files:
     video_height = int(res_match.group(1)[8:12])
     print(video_height)
 
-    fps_match = float(re.search(r'MediaTimebase(.{4,7})', text).group(1)[1:])
-    print(fps_match)
+    clip_fps = float(re.search(r'MediaTimebase(.{4,7})', text).group(1)[1:])
+    print(clip_fps)
 
-    if fps_match > 46:
+    if clip_fps > 46:
         print("skipping stabilisation")
         pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  
 
@@ -190,13 +191,13 @@ for file_path, file_name in mov_files:
 
         
 
-        # outputPath = output_folder + "/" + file_name+file_extension
-        # shutil.copy(file_path, outputPath)
+        outputPath = output_folder + "/" + file_name+file_extension
+        shutil.copy(file_path, outputPath)
 
 
-        # if move_source_after_stabilize:
-        #     new_source_path = os.path.join(completed_folder, file_name+file_extension)
-        #     shutil.move(file_path, new_source_path)
+        if move_source_after_stabilize:
+            new_source_path = os.path.join(completed_folder, file_name+file_extension)
+            shutil.move(file_path, new_source_path)
 
 
 
@@ -218,12 +219,89 @@ for file_path, file_name in mov_files:
 
     #set 23.976 in prpro. plan to skip stabilisation if clip is 56fps
 
+
+
+    def closest_frame_rate(clip_fps):
+        target_fps = [23.976, 24, 29.97, 30]
+        closest_fps = None
+        min_difference = float('inf')
+
+        for target in target_fps:
+            difference = abs(clip_fps - target)
+            if difference < min_difference:
+                min_difference = difference
+                closest_fps = target
+
+        return closest_fps
+
+    closest_fps = closest_frame_rate(clip_fps)
+    print("closest_fps",closest_fps)
+
+    #https://github.com/Adobe-CEP/Samples/blob/master/PProPanel/jsx/PPRO/Premiere.jsx
+    TIMEDISPLAY_24Timecode = 100
+    TIMEDISPLAY_25Timecode = 101
+    TIMEDISPLAY_2997DropTimecode = 102
+    TIMEDISPLAY_2997NonDropTimecode = 103
+    TIMEDISPLAY_30Timecode = 104
+    TIMEDISPLAY_50Timecode = 105
+    TIMEDISPLAY_5994DropTimecode = 106
+    TIMEDISPLAY_5994NonDropTimecode = 107
+    TIMEDISPLAY_60Timecode = 108
+    TIMEDISPLAY_Frames = 109
+    TIMEDISPLAY_23976Timecode = 110
+    TIMEDISPLAY_16mmFeetFrames = 111
+    TIMEDISPLAY_35mmFeetFrames = 112
+    TIMEDISPLAY_48Timecode = 113
+    TIMEDISPLAY_AudioSamplesTimecode = 200
+    TIMEDISPLAY_AudioMsTimecode = 201
+
+
+
+    if closest_fps == 23.976:
+        print("choosing fps preset")
+        fps_preset = TIMEDISPLAY_23976Timecode
+    elif closest_fps == 24:
+        fps_preset = TIMEDISPLAY_24Timecode
+    elif closest_fps == 29.97:
+        fps_preset = TIMEDISPLAY_2997DropTimecode
+    elif closest_fps == 30:
+        fps_preset = TIMEDISPLAY_30Timecode
+
+
+    print(fps_preset, type(fps_preset))
+
+
+
     #set sequence resolution
     oldSettings = sequence.getSettings()
     oldSettings.videoFrameHeight = video_height
     oldSettings.videoFrameWidth = video_width
+    print(oldSettings.videoDisplayFormat)
+    print(type(oldSettings.videoDisplayFormat))
     # oldSettings.videoDisplayFormat = fps_setting #doesnt work
+    # oldSettings.videoDisplayFormat = fps_preset
     sequence.setSettings(oldSettings)
+
+
+    app = pymiere.objects.app
+    active_sequence = app.project.activeSequence
+
+    active_sequence.projectItem.setOverrideFrameRate(30)
+
+
+
+    # if active_sequence:
+    #     current_seq_settings = active_sequence.getSettings()
+    #     if current_seq_settings:
+    #         # old_vid_setting = current_seq_settings.videoDisplayFormat
+    #         # time_as_text = active_sequence.getPlayerPosition().getFormatted(current_seq_settings.videoFrameRate, active_sequence.videoDisplayFormat)
+
+    #         # current_seq_settings.videoDisplayFormat = old_vid_setting + 1
+    #         # if current_seq_settings.videoDisplayFormat > pymiere.constants.TIMEDISPLAY_48Timecode:
+    #         current_seq_settings.videoDisplayFormat = fps_preset
+
+    #         active_sequence.setSettings(current_seq_settings)
+    #         # pymiere.PPP.updateEventPanel(f"Changed timecode display format for '{active_sequence.name}'.")
 
 
 
@@ -283,11 +361,11 @@ for file_path, file_name in mov_files:
 
     # time.sleep(99999)
     
-    
+    export_path = os.path.join(output_folder, file_name)+".mp4"  # path of the exported file
 
     if to_render:
         result = sequence.exportAsMediaDirect(
-            os.path.join(input_folder, file_name)+".mp4",  # path of the exported file
+            export_path,
             preset,  # path of the export preset file
             pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
         )
@@ -297,8 +375,12 @@ for file_path, file_name in mov_files:
 
     pymiere.objects.app.project.closeDocument()
 
+    # if debug:
+    #     os.remove(export_path)
+    #     shutil.move(new_source_path,file_path)
 
-    
+    if move_source_after_stabilize:
+        shutil.move(file_path, new_source_path)
 
 
 

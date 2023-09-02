@@ -5,6 +5,11 @@
 # Change to the script's directory
 cd "$(dirname "$0")"
 
+
+'''
+cd /Users/andrewke/Desktop/premiere-batch-stabilize-python
+'''
+
 # activate virtual environment
 source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
 

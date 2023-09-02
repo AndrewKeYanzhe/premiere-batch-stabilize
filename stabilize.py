@@ -12,7 +12,13 @@ import re
 # output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"
 # completed_folder="/Users/andrewke/Desktop/100D Test/completed"
 
+#if no argument is used
 input_folder = "/Users/andrewke/Desktop/Poco F3 test"
+
+#if argument is used, set it as input folder
+if len(sys.argv) == 2:
+    input_folder = sys.argv[1]
+
 
 subfolders = ["Stabilised", "Completed"]
 
@@ -32,6 +38,7 @@ preset = "/Users/andrewke/Documents/Adobe/Adobe Media Encoder/22.0/Presets/hevc1
 to_render = True
 to_import = True
 move_source_after_stabilize = True
+
 
 
 

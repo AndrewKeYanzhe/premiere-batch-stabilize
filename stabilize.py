@@ -20,7 +20,8 @@ if len(sys.argv) == 2:
     input_folder = sys.argv[1]
 
 
-subfolders = ["Stabilised", "Completed"]
+# subfolders = ["Stabilised", "Completed"]
+subfolders = ["Original files"]
 
 # Create subfolders
 for subfolder in subfolders:
@@ -28,7 +29,7 @@ for subfolder in subfolders:
     os.makedirs(subfolder_path, exist_ok=True)
 
 output_folder = os.path.join(input_folder,"Stabilised")
-completed_folder = os.path.join(input_folder,"Completed")
+completed_folder = os.path.join(input_folder,"Original files")
 
 new_clip = "/Users/andrewke/Desktop/100D Test/M26-1041_2.8K_waist quite a bit of shake.mov"
 
@@ -96,6 +97,11 @@ for file_path, file_name in mov_files:
     outputPath = output_folder + "/" + file_name+".mp4"
 
     
+    #move source files to different folder
+    new_source_path = os.path.join(completed_folder, file_name+".mov")
+    shutil.move(file_path, new_source_path)
+
+    
 
 
     # time.sleep(999)
@@ -148,12 +154,12 @@ for file_path, file_name in mov_files:
 
     #import clip
     rootBin = project.rootItem
-    if to_import: project.importFiles([file_path], True, rootBin, False)
+    if to_import: project.importFiles([new_source_path], True, rootBin, False)
 
 
 
     #insert clip
-    items = project.rootItem.findItemsMatchingMediaPath(file_path, ignoreSubclips=False)  
+    items = project.rootItem.findItemsMatchingMediaPath(new_source_path, ignoreSubclips=False)  
     project.activeSequence.videoTracks[0].insertClip(items[0], 0)
 
     #read video metadata
@@ -183,16 +189,20 @@ for file_path, file_name in mov_files:
 
         
 
-        outputPath = output_folder + "/" + file_name+file_extension
-        shutil.copy(file_path, outputPath)
+        # outputPath = output_folder + "/" + file_name+file_extension
+        # shutil.copy(file_path, outputPath)
 
 
-        if move_source_after_stabilize:
-            destination_file_path = os.path.join(completed_folder, file_name+file_extension)
-            shutil.move(file_path, destination_file_path)
+        # if move_source_after_stabilize:
+        #     new_source_path = os.path.join(completed_folder, file_name+file_extension)
+        #     shutil.move(file_path, new_source_path)
+
+
+
+
         continue
-    else:
-        outputPath = output_folder + "/" + file_name+".mp4"
+    # else:
+        # outputPath = output_folder + "/" + file_name+".mp4"
 
 
 
@@ -276,7 +286,7 @@ for file_path, file_name in mov_files:
 
     if to_render:
         result = sequence.exportAsMediaDirect(
-            outputPath,  # path of the exported file
+            os.path.join(input_folder, file_name)+".mp4",  # path of the exported file
             preset,  # path of the export preset file
             pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
         )
@@ -287,9 +297,7 @@ for file_path, file_name in mov_files:
     pymiere.objects.app.project.closeDocument()
 
 
-    if move_source_after_stabilize:
-        destination_file_path = os.path.join(completed_folder, file_name+".mov")
-        shutil.move(file_path, destination_file_path)
+    
 
 
 

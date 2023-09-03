@@ -366,7 +366,7 @@ for file_path, file_name in mov_files:
 
 
 
-    #add warp stabilizer
+    #add warp stabilizer. if video is too short, stabilisation might fail and script is stuck. TODO filter for short videos?
     qclip.addVideoEffect(pymiere.objects.qe.project.getVideoEffectByName("Warp Stabilizer"))
     smoothness = 2
     applyEffectProperties(getComponentByDisplayName(clip.components, effectName))

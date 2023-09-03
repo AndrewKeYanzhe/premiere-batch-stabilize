@@ -6,9 +6,14 @@
 cd "$(dirname "$0")"
 
 
-'''
+<<comment
 cd /Users/andrewke/Desktop/premiere-batch-stabilize-python
-'''
+comment
+
+#important: bash define variable cannot have space before or after =
+input_folder="/Users/andrewke/Desktop/MLV_export"
+
+prompt_input_folder=0
 
 # activate virtual environment
 source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
@@ -25,7 +30,11 @@ if ! pgrep "Adobe Premiere Pro" >/dev/null; then
     echo "Waiting for 10 seconds. Enter input folder (no need for quotes, use <backslash space> for space. can drag and drop folder into terminal): "
     # sleep 10
 
-    read input_folder
+    if [ $prompt_input_folder -eq 1 ]; then
+        read input_folder
+    fi
+
+    
 
     current_time=$(date +%s)
 
@@ -55,7 +64,9 @@ else
 
     echo "Enter input folder (no need for quotes, use <backslash space> for space. can drag and drop folder into terminal): "
 
-    read input_folder
+    if [ $prompt_input_folder -eq 1 ]; then
+        read input_folder
+    fi
 fi
 
 

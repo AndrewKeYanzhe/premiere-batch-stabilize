@@ -34,9 +34,9 @@ if ! pgrep "Adobe Premiere Pro" >/dev/null; then
         read input_folder
     fi
 
-    if [ $input_folder -eq ""]; then
-        input_folder=$default_input_folder
-    fi
+    # if [ $input_folder -eq ""]; then
+    #     input_folder=$default_input_folder
+    # fi
     
 
     current_time=$(date +%s)
@@ -71,9 +71,9 @@ else
         read input_folder
     fi
 
-    if [ $input_folder -eq ""]; then
-        input_folder=$default_input_folder
-    fi
+    # if [ $input_folder -eq ""]; then
+    #     input_folder=$default_input_folder
+    # fi
 
 fi
 
@@ -86,12 +86,12 @@ while true; do
 
 
     if [[ -n "$input_folder" ]]; then
-        echo "input_folder is a non-empty string."
+        echo "input_folder is a non-empty string. using input_folder as argument in stabilise.py"
 
         # Run the Python script and capture its output
         output=$(python stabilize.py "$input_folder" 2>&1)
     else
-        echo "input_folder is either empty or not a string."
+        echo "input_folder is either empty or not a string. using default input folder in stabilise.py"
 
         # Run the Python script and capture its output
         output=$(python stabilize.py 2>&1)

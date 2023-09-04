@@ -71,8 +71,13 @@ def applyEffectProperties(component):
         
         if display_name == "Smoothness":
             property.setValue(smoothness, True)  # 1 means update gui
-        elif display_name == "Advanced":
-            isDetailedAnalysis=True #detailed analysis is the first option in the advanced menu
+
+        #set to position, scale, rotation
+        elif display_name == "Method":
+            property.setValue(1, True)
+
+        # elif display_name == "Advanced":
+        #     isDetailedAnalysis=True #detailed analysis is the first option in the advanced menu. set isDetailedAnalysis to true, so on next loop, detailed analysis is turned on
         # elif isDetailedAnalysis:
         #     property.setValue(True, True)  # a bit too slow
         #     isDetailedAnalysis = False
@@ -89,6 +94,10 @@ for file in os.listdir(input_folder):
         file_path = os.path.join(input_folder, file)
         mov_files.append((file_path, os.path.splitext(file)[0]))
         file_extension = os.path.splitext(file)[1]
+
+
+if len(mov_files) == 0:
+    print("no files found, exiting")
 
 for file_path, file_name in mov_files:
     print("-" * 30)
@@ -305,7 +314,7 @@ for file_path, file_name in mov_files:
     app = pymiere.objects.app
     active_sequence = app.project.activeSequence
 
-    active_sequence.projectItem.setOverrideFrameRate(30)
+    active_sequence.projectItem.setOverrideFrameRate(30) #doesnt work
 
 
 
@@ -371,7 +380,7 @@ for file_path, file_name in mov_files:
     smoothness = 2
     applyEffectProperties(getComponentByDisplayName(clip.components, effectName))
 
-
+    
 
     while not sequence.isDoneAnalyzingForVideoEffects():
         time.sleep(1)  # Sleep for 1 second
@@ -397,6 +406,8 @@ for file_path, file_name in mov_files:
     # if debug:
     #     os.remove(export_path)
     #     shutil.move(new_source_path,file_path)
+
+    # time.sleep(999999999)
 
     if move_source_after_stabilize:
         shutil.move(file_path, new_source_path)

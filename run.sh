@@ -11,9 +11,9 @@ cd /Users/andrewke/Desktop/premiere-batch-stabilize-python
 comment
 
 #important: bash define variable cannot have space before or after =
-input_folder="/Users/andrewke/Desktop/MLV_export"
+default_input_folder="/Users/andrewke/Desktop/MLV_export"
 
-prompt_input_folder=0
+prompt_input_folder=1
 
 # activate virtual environment
 source /Users/andrewke/Documents/Pymiere/pymiere/bin/activate
@@ -34,6 +34,9 @@ if ! pgrep "Adobe Premiere Pro" >/dev/null; then
         read input_folder
     fi
 
+    if [ $input_folder -eq ""]; then
+        input_folder=$default_input_folder
+    fi
     
 
     current_time=$(date +%s)
@@ -67,6 +70,11 @@ else
     if [ $prompt_input_folder -eq 1 ]; then
         read input_folder
     fi
+
+    if [ $input_folder -eq ""]; then
+        input_folder=$default_input_folder
+    fi
+
 fi
 
 

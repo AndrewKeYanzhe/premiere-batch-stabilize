@@ -7,7 +7,7 @@ from pymiere import wrappers
 import sys
 import re
 
-# import datetime
+# TODO add progress bar based on for loop through file list
 
 
 debug = False #this disables copying etc and restores the files to the original positions
@@ -233,7 +233,7 @@ for file_path, file_name in mov_files:
     clip_fps = float(re.search(r'MediaTimebase(.{4,7})', text).group(1)[1:])
     print(clip_fps)
 
-    if clip_fps > 46:
+    if clip_fps > 46 or total_seconds <=1:
         print("skipping stabilisation")
         pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  
 

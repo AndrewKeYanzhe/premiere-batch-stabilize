@@ -7,6 +7,9 @@ from pymiere import wrappers
 import sys
 import re
 
+# import datetime
+
+
 debug = False #this disables copying etc and restores the files to the original positions
 
 # input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
@@ -195,6 +198,26 @@ for file_path, file_name in mov_files:
     #read video metadata
     text = project.activeSequence.videoTracks[0].clips[0].projectItem.getProjectMetadata()
     # print(text)
+
+
+    video_duration = re.search(r'VideoDuration(.{4,13})', text).group(1)[1:12]
+
+    print("duration string",video_duration) #e.g. "00:00:02:02" last 2 digits are frames
+
+    time_parts = video_duration.split(':')
+
+    # Extract hours, minutes, and seconds
+    hours = int(time_parts[0])
+    minutes = int(time_parts[1])
+    seconds = int(time_parts[2])
+
+    # Convert to seconds
+    total_seconds = hours * 3600 + minutes * 60 + seconds
+
+    print("video duration in seconds, rounded down: ",total_seconds)
+
+
+    # time.sleep(9999)
 
     res_match = re.search(r'VideoInfo(.{4,12})', text)
 

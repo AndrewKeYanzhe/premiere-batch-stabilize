@@ -89,18 +89,20 @@ while true; do
         echo "input_folder is a non-empty string. using input_folder as argument in stabilise.py"
 
         # Run the Python script and capture its output
-        output=$(python stabilize.py "$input_folder" 2>&1)
+        # output=$(python stabilize.py "$input_folder" 2>&1)
+        python stabilize.py "$input_folder"
     else
         echo "input_folder is either empty or not a string. using default input folder in stabilise.py"
 
         # Run the Python script and capture its output
-        output=$(python stabilize.py 2>&1)
+        # output=$(python stabilize.py 2>&1)
+        python stabilize.py
     fi
 
     
 
     # # Print the captured output
-    echo "$output"
+    # echo "$output"
 
 
 

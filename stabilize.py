@@ -113,7 +113,7 @@ for file_path, file_name in mov_files:
 
     
     # #move source files to different folder
-    new_source_path = os.path.join(completed_folder, file_name+".mov")
+    new_source_path = os.path.join(completed_folder, file_name+file_extension)
     # shutil.move(file_path, new_source_path)
 
     
@@ -414,7 +414,7 @@ for file_path, file_name in mov_files:
 
     # time.sleep(99999)
     
-    export_path = os.path.join(output_folder, file_name)+".mp4"  # path of the exported file
+    export_path = os.path.join(output_folder, file_name)+file_extension  # path of the exported file
 
     if to_render:
         result = sequence.exportAsMediaDirect(

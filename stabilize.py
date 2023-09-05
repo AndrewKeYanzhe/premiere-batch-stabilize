@@ -18,8 +18,7 @@ debug = False #this disables copying etc and restores the files to the original 
 # completed_folder="/Users/andrewke/Desktop/100D Test/completed"
 
 #if no argument is used
-input_folder = "/Volumes/Elements/test"
-
+input_folder = '/Users/andrewke/Desktop/MLV_export'
 #if argument is used, set it as input folder
 if len(sys.argv) == 2:
     input_folder = sys.argv[1]
@@ -422,6 +421,13 @@ for file_path, file_name in mov_files:
             preset,  # path of the export preset file
             pymiere.objects.app.encoder.ENCODE_ENTIRE  # what part of the sequence to export. Others are: ENCODE_IN_TO_OUT or ENCODE_WORKAREA
         )
+
+    # def encodeComplete():
+    #     print("completed encode")
+
+
+    # pymiere.objects.app.encoder.bind('onEncoderJobComplete', encodeComplete);
+
 
     #avoid making changes to original prproj. closeDocument() saves the file by default
     pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  

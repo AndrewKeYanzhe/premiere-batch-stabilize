@@ -8,6 +8,7 @@ import sys
 import re
 
 # TODO add progress bar based on for loop through file list
+# TODO fix bug when sometimes stabilisation effect is not added
 
 
 debug = False #this disables copying etc and restores the files to the original positions
@@ -233,6 +234,7 @@ for file_path, file_name in mov_files:
     clip_fps = float(re.search(r'MediaTimebase(.{4,7})', text).group(1)[1:])
     print(clip_fps)
 
+    #skip stabilisation for high frame rate, or video duration less than 2 seconds. if video is too short, warp stabilizer fails
     if clip_fps > 46 or total_seconds <=1:
         print("skipping stabilisation")
         pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  

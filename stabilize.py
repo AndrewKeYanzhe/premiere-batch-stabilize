@@ -252,6 +252,7 @@ for file_path, file_name in mov_files:
 
 
         if move_source_after_stabilize:
+            print("moving source file")
             new_source_path = os.path.join(completed_folder, file_name+file_extension)
             shutil.move(file_path, new_source_path)
 
@@ -445,6 +446,7 @@ for file_path, file_name in mov_files:
     # time.sleep(999999999)
 
     if move_source_after_stabilize:
+        print("moving source file")
         shutil.move(file_path, new_source_path)
 
 

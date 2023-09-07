@@ -67,6 +67,10 @@ def applyEffectProperties(component):
     print("adding warp stabilizer effect")
     isDetailedAnalysis=False
     
+
+
+
+    #set warp stabiliser settings
     for property in component.properties:
         display_name = property.displayName
         # print(display_name)
@@ -76,8 +80,8 @@ def applyEffectProperties(component):
             property.setValue(smoothness, True)  # 1 means update gui
 
         #set to position, scale, rotation
-        elif display_name == "Method":
-            property.setValue(1, True)
+        # elif display_name == "Method":
+        #     property.setValue(1, True)
 
         # elif display_name == "Advanced":
         #     isDetailedAnalysis=True #detailed analysis is the first option in the advanced menu. set isDetailedAnalysis to true, so on next loop, detailed analysis is turned on

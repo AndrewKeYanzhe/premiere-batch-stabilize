@@ -124,7 +124,7 @@ for file_path, file_name in mov_files:
 
     # time.sleep(999)
 
-    project_path = "/Users/andrewke/Desktop/100D Test/Untitled 4.prproj"
+    project_path = "/Users/andrewke/Desktop/premiere-batch-stabilize-python/empty_sequence.prproj"
     # create new empty project  
     # pymiere.objects.app.newProject(project_path)  # from Premiere 2020  
     # pymiere.objects.qe.newProject(project_path)  # before Premiere 2020  
@@ -435,7 +435,7 @@ for file_path, file_name in mov_files:
 
 
     #avoid making changes to original prproj. closeDocument() saves the file by default
-    pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/100D Test/Untitled 5.prproj")  
+    pymiere.objects.app.project.saveAs("/Users/andrewke/Desktop/premiere-batch-stabilize-python/dummy.prproj")  
 
     pymiere.objects.app.project.closeDocument()
 

@@ -12,7 +12,7 @@ import re
 
 
 debug = False #this disables copying etc and restores the files to the original positions
-use_position_scale_rotation = True
+use_position_scale_rotation = False
 
 # input_folder = "/Users/andrewke/Desktop/100D Test/to_stabilise"
 # output_folder = "/Users/andrewke/Desktop/100D Test/stabilised"

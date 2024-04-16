@@ -1,4 +1,4 @@
-# premiere-batch-stabilize-python
+# Premiere Pro batch stabilisation
 
 This script uses the [Pymiere](https://github.com/qmasingarbe/pymiere) library to automate video stabilization in Premiere Pro.
 
